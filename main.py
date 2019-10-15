@@ -45,7 +45,6 @@ def initDir():
 def createArtistFolders(cwd):
     listOfFiles = os.listdir()
     artists = []
-    artist = ' '
 
     for file in listOfFiles:
         artist = getTag(file, "artist", "Artist", "ARTIST")
@@ -55,7 +54,21 @@ def createArtistFolders(cwd):
         os.rename(cwd + '/' + file, cwd + '/' + artist + '/' + file)
 
 
-if __name__ == '__main__':
+def createWithSubFolders(cwd):
+    listOfFiles = os.listdir()
+    artists = []
+    albums = []
+    for file in listOfFiles:
+        artist = getTag(file, "artist", "Artist", "ARTIST")
+        album = getTag(file, "album", "Album", "ALBUM")
+        if (artist not in artists) and (album not in albums) or (artist in artists) and (album not in albums):
+            artists.append(artist)
+            albums.append(album)
+            path = os.path.join(artist, album)
+            os.makedirs(path)
+        os.rename(cwd + '/' + file, cwd + '/' + artist + "/" + album + '/' + file)
 
+
+if __name__ == '__main__':
     cwd = initDir()
-    createArtistFolders(cwd)
+    createWithSubFolders(cwd)
