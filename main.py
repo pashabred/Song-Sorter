@@ -1,3 +1,4 @@
+import shutil
 import os
 from mutagen.flac import FLAC
 from mutagen.easymp4 import EasyMP4 as MP4
@@ -32,7 +33,7 @@ def getTag(file, tag1, tag2, tag3):
 
 
 def initDir():
-    os.chdir("/home/pashabred/Music")
+    os.chdir("/media/pashabred/sd2")
 
     cwd = os.getcwd()
 
@@ -47,28 +48,40 @@ def createArtistFolders(cwd):
     artists = []
 
     for file in listOfFiles:
+
         artist = getTag(file, "artist", "Artist", "ARTIST")
         if artist not in artists:
             artists.append(artist)
             os.mkdir(artist)
-        os.rename(cwd + '/' + file, cwd + '/' + artist + '/' + file)
+            os.rename(cwd + '/' + file, cwd + '/' + artist + '/' + file)
 
 
 def createWithSubFolders(cwd):
     listOfFiles = os.listdir()
+
     artists = []
     albums = []
     for file in listOfFiles:
-        artist = getTag(file, "artist", "Artist", "ARTIST")
-        album = getTag(file, "album", "Album", "ALBUM")
-        if (artist not in artists) and (album not in albums) or (artist in artists) and (album not in albums):
-            artists.append(artist)
-            albums.append(album)
-            path = os.path.join(artist, album)
-            os.makedirs(path)
-        os.rename(cwd + '/' + file, cwd + '/' + artist + "/" + album + '/' + file)
+        if (".mp3" in file) or (".flac" in file) or (".ape" in file) or (".m4a" in file):
+
+            try:
+                artist = getTag(file, "artist", "Artist", "ARTIST")
+                album = getTag(file, "album", "Album", "ALBUM")
+                path = os.path.join(artist, album)
+                prevDir = os.path.join(cwd, file)
+                destDir = os.path.join(cwd, path + '/' + file)
+
+                if not os.path.isdir(os.path.join(cwd, path)):
+                    os.makedirs(path)
+
+                shutil.move(prevDir, destDir)
+
+            except:
+                print(file, "error")
 
 
 if __name__ == '__main__':
+
+
     cwd = initDir()
     createWithSubFolders(cwd)
