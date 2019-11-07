@@ -33,31 +33,16 @@ def getTag(file, tag1, tag2, tag3):
 
 
 def initDir():
-    os.chdir("/media/pashabred/sd2")
+    inputDir = input("Enter working directory ")
+    os.chdir(inputDir)
 
-    cwd = os.getcwd()
+    print("Current working directory is:", os.getcwd())
 
-    # print the current directory
-    print("Current working directory is:", cwd)
-
-    return cwd
+    return os.getcwd()
 
 
-def createArtistFolders(cwd):
-    listOfFiles = os.listdir()
-    artists = []
-
-    for file in listOfFiles:
-
-        artist = getTag(file, "artist", "Artist", "ARTIST")
-        if artist not in artists:
-            artists.append(artist)
-            os.mkdir(artist)
-            os.rename(cwd + '/' + file, cwd + '/' + artist + '/' + file)
-
-
-def createWithSubFolders(cwd):
-    listOfFiles = os.listdir()
+def createFolders(cwd):
+    listOfFiles = os.listdir(cwd)
 
     artists = []
     albums = []
@@ -80,8 +65,35 @@ def createWithSubFolders(cwd):
                 print(file, "error")
 
 
+def removeFolders(cwd):
+    artists = os.listdir(cwd)
+
+    for artist in artists:
+        albums = os.listdir(cwd + '/' + artist)
+
+        try:
+            for album in albums:
+                tracks = os.listdir(cwd + '/' + artist + '/' + album)
+                for track in tracks:
+                    os.rename(cwd + '/' + artist + '/' + album + '/' + track, cwd + '/' + track)
+            shutil.rmtree(cwd + '/' + artist)
+
+        except:
+            print("Removing error")
+
+
 if __name__ == '__main__':
-
-
     cwd = initDir()
-    createWithSubFolders(cwd)
+
+    ans = input("Choose action " "\n"  
+                "1) create folders" "\n"
+                "2) remove folders" "\n")
+    if ans == '1':
+        createFolders(cwd)
+        print("Done")
+    elif ans == '2':
+        removeFolders(cwd)
+        print("Done")
+
+    else:
+        print("Enter in listed number")
